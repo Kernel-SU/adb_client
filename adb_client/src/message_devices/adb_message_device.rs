@@ -37,7 +37,15 @@ impl<T: ADBMessageTransport> ADBMessageDevice<T> {
         };
 
         let mut message_device = Self { transport };
-        message_device.connect(&private_key)?;
+        message_device.connect(Some(&private_key))?;
+
+        Ok(message_device)
+    }
+
+    /// Instantiate a new [`ADBMessageTransport`], without private key (auth is not supported)
+    pub fn new_no_private_key(transport: T) -> Result<Self> {
+        let mut message_device = Self { transport };
+        message_device.connect(None)?;
 
         Ok(message_device)
     }
@@ -47,7 +55,7 @@ impl<T: ADBMessageTransport> ADBMessageDevice<T> {
     }
 
     /// Send initial connect
-    fn connect(&mut self, private_key: &ADBRsaKey) -> Result<()> {
+    fn connect(&mut self, private_key: Option<&ADBRsaKey>) -> Result<()> {
         self.get_transport_mut().connect()?;
 
         let message = ADBTransportMessage::try_new(
@@ -81,6 +89,7 @@ impl<T: ADBMessageTransport> ADBMessageDevice<T> {
             }
             MessageCommand::Auth => {
                 log::debug!("Authentication required");
+                let private_key = private_key.ok_or(RustADBError::NoPrivateKey)?;
                 self.auth_handshake(message, private_key)
             }
             _ => Err(crate::RustADBError::WrongResponseReceived(

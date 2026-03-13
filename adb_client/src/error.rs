@@ -138,6 +138,9 @@ pub enum RustADBError {
     /// An unknown file mode was encountered in list
     #[error("Unknown file mode {0}")]
     UnknownFileMode(u32),
+    /// No private key
+    #[error("No private key")]
+    NoPrivateKey,
 }
 
 impl<T> From<std::sync::PoisonError<T>> for RustADBError {

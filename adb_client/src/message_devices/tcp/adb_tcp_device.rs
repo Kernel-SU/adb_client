@@ -29,6 +29,15 @@ impl ADBTcpDevice {
             inner: ADBMessageDevice::new(TcpTransport::new(address)?, private_key_path)?,
         })
     }
+
+    /// Instantiate a new [`ADBTcpDevice`], without authentication or tls support
+    pub fn new_no_private_key<A: Into<SocketAddr>>(address: A) -> Result<Self> {
+        Ok(Self {
+            inner: ADBMessageDevice::new_no_private_key(TcpTransport::new_no_private_key(
+                address,
+            ))?,
+        })
+    }
 }
 
 impl ADBDeviceExt for ADBTcpDevice {

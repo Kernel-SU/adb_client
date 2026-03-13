@@ -80,7 +80,7 @@ impl Write for CurrentConnection {
 pub struct TcpTransport {
     address: SocketAddr,
     current_connection: Option<Arc<Mutex<CurrentConnection>>>,
-    private_key_path: PathBuf,
+    private_key_path: Option<PathBuf>,
 }
 
 fn certificate_from_pk(key_pair: &KeyPair) -> Result<Vec<CertificateDer<'static>>> {
@@ -106,7 +106,16 @@ impl TcpTransport {
         Self {
             address: address.into(),
             current_connection: None,
-            private_key_path,
+            private_key_path: Some(private_key_path),
+        }
+    }
+
+    /// Instantiate a new [`TcpTransport`]
+    pub fn new_no_private_key<A: Into<SocketAddr>>(address: A) -> Self {
+        Self {
+            address: address.into(),
+            current_connection: None,
+            private_key_path: None,
         }
     }
 
@@ -242,13 +251,18 @@ impl ADBMessageTransport for TcpTransport {
                 CurrentConnection::Tcp(tcp_stream) => {
                     // TODO: Check if we cannot be more precise
 
-                    let pk_content = read_to_string(&self.private_key_path)?;
+                    let private_key_path = self
+                        .private_key_path
+                        .as_ref()
+                        .ok_or(RustADBError::NoPrivateKey)?;
+
+                    let pk_content = read_to_string(private_key_path)?;
 
                     let key_pair =
                         KeyPair::from_pkcs8_pem_and_sign_algo(&pk_content, &PKCS_RSA_SHA256)?;
 
                     let certificate = certificate_from_pk(&key_pair)?;
-                    let private_key = PrivatePkcs8KeyDer::from_pem_file(&self.private_key_path)?;
+                    let private_key = PrivatePkcs8KeyDer::from_pem_file(private_key_path)?;
 
                     let mut client_config = ClientConfig::builder()
                         .dangerous()
