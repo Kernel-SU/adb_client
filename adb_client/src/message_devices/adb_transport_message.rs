@@ -5,10 +5,6 @@ use crate::{
     message_devices::{message_commands::MessageCommand, utils::BinaryEncodable},
 };
 
-pub const AUTH_TOKEN: u32 = 1;
-pub const AUTH_SIGNATURE: u32 = 2;
-pub const AUTH_RSAPUBLICKEY: u32 = 3;
-
 #[derive(Debug)]
 pub struct ADBTransportMessage {
     header: ADBTransportMessageHeader,
@@ -142,7 +138,7 @@ impl ADBTransportMessage {
         &self.header
     }
 
-    pub const fn payload(&self) -> &Vec<u8> {
+    pub fn payload(&self) -> &[u8] {
         &self.payload
     }
 
