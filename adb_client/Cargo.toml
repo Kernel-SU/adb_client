@@ -17,11 +17,11 @@ workspace = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
-byteorder = { version = "1.5.0" }
-log = { version = "0.4.29" }
-num_enum = { version = "0.7.5" }
-rand = { version = "0.10.0" }
-thiserror = { version = "2.0.18" }
+byteorder = { version = "1" }
+log = { version = "0.4" }
+num_enum = { version = "0.7" }
+rand = { version = "0.10" }
+thiserror = { version = "2" }
 
 [dev-dependencies]
-anyhow = { version = "1.0.100" }
+anyhow = { version = "1" }

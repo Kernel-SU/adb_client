@@ -15,9 +15,9 @@ workspace = true
 
 [dependencies]
 adb_client = { version = "^3.0.1" }
-clap = { version = "4.5.54", features = ["derive"] }
-env_logger = { version = "0.11.8" }
-log = { version = "0.4.29" }
+clap = { version = "4", features = ["derive"] }
+env_logger = { version = "0.11" }
+log = { version = "0.4" }
 
 
 #####################################
